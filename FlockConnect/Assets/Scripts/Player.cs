@@ -8,8 +8,6 @@ public class Player : MonoBehaviour {
     Rigidbody2D rb;
     public int Hp { get; set; }
     public int startHp;
-    [SerializeField]
-    private GameObject Bullet;
     public Camera mainCamera;
     [SerializeField]
     float invincibleCoolTime = 0,deathCount;
@@ -43,9 +41,6 @@ public class Player : MonoBehaviour {
             Death();
         }
         if (!isDeath) {
-            if (Input.GetMouseButtonDown(0)) {
-                Shot();
-            }
             MoveInput();
         }
         
@@ -112,12 +107,6 @@ public class Player : MonoBehaviour {
             isTrigger = setBool;
             count = 0;
         }
-    }
-
-    void Shot() {
-        soundEffect.clip = shotSoundEffect;
-        soundEffect.Play();
-        Instantiate(Bullet,transform.position,transform.rotation);
     }
     public void Damege() {
         if (!isInvincible) {
