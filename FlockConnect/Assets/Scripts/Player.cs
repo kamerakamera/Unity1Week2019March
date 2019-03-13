@@ -6,13 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
     Rigidbody2D rb;
-    public int Hp { get; set; }
-    public int startHp;
+    public int Hp { get;private set; }
+    private int maxHp = 5;
     public Camera mainCamera;
     [SerializeField]
     float invincibleCoolTime = 0,deathCount;
     bool isAvoid, avoidAble, avoidInput;
     Vector2 moveDirection;
+    Vector3 startPos = Vector2.zero;
     bool right,left,up,down;
     int vertical,horizontal;
     public bool isInvincible,isDeath;
@@ -26,7 +27,7 @@ public class Player : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Hp = startHp;
+        Hp = 1;
         rb = GetComponent<Rigidbody2D>();
         //soundEffect = GetComponent<AudioSource>();
         MovePower = 10;
@@ -90,7 +91,7 @@ public class Player : MonoBehaviour {
                 rb.AddForce(new Vector2(0, vertical * MovePower),ForceMode2D.Force);
                 return;
             }
-        }else if(transform.position.x >= mainCamera.ViewportToWorldPoint(new Vector2(1,1)).x){
+        }/*else if(transform.position.x >= mainCamera.ViewportToWorldPoint(new Vector2(1,1)).x){
             if(rb.velocity.x >= 0){
                 rb.velocity = new Vector2(0,rb.velocity.y);
             }
@@ -98,14 +99,21 @@ public class Player : MonoBehaviour {
                 rb.AddForce(new Vector2(0, vertical * MovePower),ForceMode2D.Force);
                 return;
             }
-        }
+        }*/
         rb.AddForce(new Vector2(horizontal * MovePower, vertical * MovePower) - rb.velocity,ForceMode2D.Force);
     }
+
     void IntervalCount(ref float count, float intervalTime, ref bool isTrigger, bool setBool) {
         count += Time.deltaTime;
         if (count >= intervalTime) {
             isTrigger = setBool;
             count = 0;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        if(other.gameObject.tag == "Burrow"){
+            Hp++;
         }
     }
     public void Damege() {
