@@ -18,11 +18,10 @@ public class Player : MonoBehaviour {
     int vertical,horizontal;
     public bool isInvincible,isDeath;
     public float MovePower { get; set; }
-    public float StartMovePower { get; set; }
-    public Image damegeFlash;
-    AudioSource soundEffect;
-    public AudioClip shotSoundEffect;
     public AudioClip damegeSoundEffect;
+    [SerializeField]
+    private GameObject flocksPrefab;
+    private List<GameObject> flocks = new List<GameObject>();
     
 
     // Use this for initialization
@@ -31,7 +30,6 @@ public class Player : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         //soundEffect = GetComponent<AudioSource>();
         MovePower = 10;
-        StartMovePower = MovePower;
         //damegeFlash.enabled = false;
         isDeath =false;
 	}
@@ -52,7 +50,6 @@ public class Player : MonoBehaviour {
         //無敵時間
         if (isInvincible) {
             invincibleCoolTime += Time.fixedDeltaTime;
-            damegeFlash.color = new Color(damegeFlash.color.r, damegeFlash.color.g, damegeFlash.color.b, 1 - invincibleCoolTime);
             if (invincibleCoolTime >= 1.0f) {
                 isInvincible = false;
             }
@@ -91,15 +88,7 @@ public class Player : MonoBehaviour {
                 rb.AddForce(new Vector2(0, vertical * MovePower),ForceMode2D.Force);
                 return;
             }
-        }/*else if(transform.position.x >= mainCamera.ViewportToWorldPoint(new Vector2(1,1)).x){
-            if(rb.velocity.x >= 0){
-                rb.velocity = new Vector2(0,rb.velocity.y);
-            }
-            if(horizontal >= 1){
-                rb.AddForce(new Vector2(0, vertical * MovePower),ForceMode2D.Force);
-                return;
-            }
-        }*/
+        }
         rb.AddForce(new Vector2(horizontal * MovePower, vertical * MovePower) - rb.velocity,ForceMode2D.Force);
     }
 
@@ -111,20 +100,27 @@ public class Player : MonoBehaviour {
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.tag == "Burrow"){
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.tag == "Burrow"){
             Hp++;
+            CollFlocks();
+        }
+    }
+
+    private void CollFlocks(){
+        flocks.Add(Instantiate(flocksPrefab,transform.position,Quaternion.identity));
+        if(flocks.Count == 1){
+            flocks[flocks.Count-1].GetComponent<Flocks>().SetFollowObj(gameObject);
+        }else{
+            flocks[flocks.Count-1].GetComponent<Flocks>().SetFollowObj(flocks[flocks.Count-2]);
         }
     }
     public void Damege() {
         if (!isInvincible) {
-            Hp -= 1;
-            soundEffect.clip = damegeSoundEffect;
-            soundEffect.Play();
+            Hp = Hp/2;
             isInvincible = true;
-            damegeFlash.enabled = true;
             invincibleCoolTime = 0;
-            if (Hp <= 0) {
+            if (Hp < 1) {
                 isDeath = true;
             }
         }

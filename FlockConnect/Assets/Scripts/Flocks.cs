@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CallNextFlock : MonoBehaviour
+public class Flocks : MonoBehaviour
 {
     [SerializeField]
-    GameObject beforeFlock;
+    GameObject followObj;//参照する群れ
     Vector3 nextPos;
     float waitTime = 0.3f;
     // Start is called before the first frame update
@@ -24,7 +24,11 @@ public class CallNextFlock : MonoBehaviour
 
     void GetFlocksPos()
     {
-        nextPos = beforeFlock.transform.position;
+        nextPos = followObj.transform.position;
+    }
+
+    public void SetFollowObj(GameObject obj){
+        followObj = obj;
     }
 
     void SetFlocksPos(Vector3 pos)
