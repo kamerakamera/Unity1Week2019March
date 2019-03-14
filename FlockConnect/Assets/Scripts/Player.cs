@@ -128,7 +128,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Burrow")
+        if (other.tag == "Burrow")//巣穴での群れ回収
         {
             Hp++;
             CollFlocks();
@@ -152,23 +152,24 @@ public class Player : MonoBehaviour
         if (!isInvincible)
         {
             Hp = Hp / 2;
-            isInvincible = true;
-            invincibleCoolTime = 0;
             if (Hp < 1)
             {
                 isDeath = true;
             }
+            for (int i = flocks.Count + 1; (i > Hp) && Hp >= 1; i--)
+            {
+                Destroy(flocks[i - 2]);
+                flocks.RemoveAt(i - 2);
+            }
+            Debug.Log(Hp);
+            isInvincible = true;
+            invincibleCoolTime = 0;
         }
-    }
-
-    public void Damege(int damege)
-    {
-        Hp -= damege - 1;
-        Damege();
     }
 
     void Death()
     {
+        Debug.Log("オイオイ死んだわアイツ");
         //死亡したときの処理
     }
 }

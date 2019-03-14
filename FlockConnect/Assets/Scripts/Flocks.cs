@@ -16,7 +16,7 @@ public class Flocks : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         GetFlocksPos();
         StartCoroutine(CallFlocks(nextPos, nextRot));
