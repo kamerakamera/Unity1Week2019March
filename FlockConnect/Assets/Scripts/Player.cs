@@ -128,7 +128,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Burrow")//巣穴での群れ回収
+        if (other.tag == "Burrow" && !isDeath)//巣穴での群れ回収
         {
             Hp++;
             CollFlocks();

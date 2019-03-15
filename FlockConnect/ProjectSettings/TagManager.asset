@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Burrow
+  - Wall
   layers:
   - Default
   - TransparentFX
