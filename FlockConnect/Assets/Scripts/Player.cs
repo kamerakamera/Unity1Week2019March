@@ -47,7 +47,10 @@ public class Player : MonoBehaviour
         {
             MoveInput();
         }
-
+        if (transform.position.x < mainCamera.ViewportToWorldPoint(Vector2.zero).x)
+        {
+            Death();
+        }
     }
 
     void FixedUpdate()
@@ -161,7 +164,6 @@ public class Player : MonoBehaviour
                 Destroy(flocks[i - 2]);
                 flocks.RemoveAt(i - 2);
             }
-            Debug.Log(Hp);
             isInvincible = true;
             invincibleCoolTime = 0;
         }

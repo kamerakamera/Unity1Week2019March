@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Maguro : Enemy
 {
-    Vector2 rushPower = new Vector2(-10, 0);
+    Vector2 rushPower = new Vector2(-6, 0);
     // Start is called before the first frame update
     override protected void Start()
     {

@@ -21,7 +21,6 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log("damege");
             other.gameObject.GetComponent<Player>().Damege();
         }
     }

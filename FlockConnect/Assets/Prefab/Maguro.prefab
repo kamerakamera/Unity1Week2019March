@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2565475711565459576}
   - component: {fileID: 6931473400933592892}
   - component: {fileID: 1795074046524293760}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Maguro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
