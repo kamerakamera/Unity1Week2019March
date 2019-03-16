@@ -10,17 +10,29 @@ public class StageManeger : MonoBehaviour
     [SerializeField]
     private GameObject player;
     Vector3 enemyCreatePos;
+    bool stopCor;
     private List<GameObject> wallList = new List<GameObject>(), ikaList = new List<GameObject>(), maguroList = new List<GameObject>(), burrowList = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(CreateMaguroCor());
         StartCoroutine(CreateIkaCor());
+        stopCor = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (player == null)
+        {
+            if (stopCor == false)
+            {
+                StopCoroutine(CreateIkaCor());
+                StopCoroutine(CreateMaguroCor());
+                stopCor = true;
+            }
+            return;
+        }
         if (player.transform.position.x + wallInterval >= createPos)//ここでStage生成
         {
             CreateWall();
@@ -58,6 +70,10 @@ public class StageManeger : MonoBehaviour
 
     void CreateMaguro()
     {
+        if (player == null)
+        {
+            return;
+        }
         enemyCreatePos = new Vector3(maguroCreateOffset + player.transform.position.x, Random.Range(-createOffsetY, createOffsetY), 0);
         maguroList.Add(Instantiate(maguroPrefab, enemyCreatePos, Quaternion.identity));
         if (maguroList.Count >= 12)
@@ -69,6 +85,10 @@ public class StageManeger : MonoBehaviour
 
     void CreateIka()
     {
+        if (player == null)
+        {
+            return;
+        }
         enemyCreatePos = new Vector3(ikaCreateOffsetX + player.transform.position.x, Random.Range(-createOffsetY, createOffsetY), 0);
         ikaList.Add(Instantiate(ikaPrefab, enemyCreatePos, Quaternion.identity));
         ikaList[ikaList.Count - 1].transform.rotation = Quaternion.Euler(new Vector3(0, 0, Vector3.Angle(ikaList[ikaList.Count - 1].transform.up, player.transform.position - ikaList[ikaList.Count - 1].transform.position)));

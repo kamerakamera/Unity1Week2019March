@@ -25,6 +25,11 @@ public class Flocks : MonoBehaviour
 
     void GetFlocksPos()
     {
+        if (followObj == null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
         nextPos = followObj.transform.position;
         nextRot = followObj.transform.rotation;
     }

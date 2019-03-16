@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
         {
             MoveInput();
         }
-        if (transform.position.x < mainCamera.ViewportToWorldPoint(Vector2.zero).x)
+        if (transform.position.x < mainCamera.ViewportToWorldPoint(Vector2.zero).x - 2.8f)
         {
             Death();
         }
@@ -172,6 +172,7 @@ public class Player : MonoBehaviour
     void Death()
     {
         Debug.Log("オイオイ死んだわアイツ");
+        Destroy(this.gameObject);
         //死亡したときの処理
     }
 }
