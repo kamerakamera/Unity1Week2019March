@@ -25,7 +25,7 @@ public class Flocks : MonoBehaviour
 
     void GetFlocksPos()
     {
-        if (followObj == null)
+        if (followObj.gameObject == false)
         {
             Destroy(this.gameObject);
             return;

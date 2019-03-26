@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    GameManeger gameManeger;
     Rigidbody2D rb;
     public int Hp { get; private set; }
     private int maxHp = 5;
@@ -19,20 +20,25 @@ public class Player : MonoBehaviour
     int vertical, horizontal;
     public bool isInvincible, isDeath;
     public float MovePower { get; set; }
-    public AudioClip damegeSoundEffect;
+    public AudioClip damegeSoundEffect, flocksSoundEffect, deathSoundEffect;
     [SerializeField]
     private GameObject flocksPrefab;
     private List<GameObject> flocks = new List<GameObject>();
-
+    [SerializeField]
+    private ScoreManeger scoreManeger;
+    [SerializeField]
+    Animator animator;
+    [SerializeField]
+    AudioSource audioSource;//カメラにつけることでPlayerがfalseでも聞こえるようにしよう
 
     // Use this for initialization
     void Start()
     {
+        gameManeger = GameObject.Find("GameManeger").GetComponent<GameManeger>();
+        mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         Hp = 1;
         rb = GetComponent<Rigidbody2D>();
-        //soundEffect = GetComponent<AudioSource>();
-        MovePower = 10;
-        //damegeFlash.enabled = false;
+        MovePower = 12;
         isDeath = false;
     }
 
@@ -133,6 +139,8 @@ public class Player : MonoBehaviour
     {
         if (other.tag == "Burrow" && !isDeath)//巣穴での群れ回収
         {
+            audioSource.clip = flocksSoundEffect;
+            audioSource.Play();
             Hp++;
             CollFlocks();
         }
@@ -140,6 +148,8 @@ public class Player : MonoBehaviour
 
     private void CollFlocks()
     {
+        scoreManeger.AddFlockScore();
+        MovePower -= 1;
         flocks.Add(Instantiate(flocksPrefab, transform.position, Quaternion.identity));
         if (flocks.Count == 1)
         {
@@ -155,10 +165,14 @@ public class Player : MonoBehaviour
         if (!isInvincible)
         {
             Hp = Hp / 2;
+            MovePower = 13 - Hp;
             if (Hp < 1)
             {
+                Hp = 0;
                 isDeath = true;
             }
+            audioSource.clip = damegeSoundEffect;
+            audioSource.Play();
             for (int i = flocks.Count + 1; (i > Hp) && Hp >= 1; i--)
             {
                 Destroy(flocks[i - 2]);
@@ -166,13 +180,28 @@ public class Player : MonoBehaviour
             }
             isInvincible = true;
             invincibleCoolTime = 0;
+            animator.SetTrigger("Damege");
         }
+    }
+
+    public void SetStart()
+    {
+        transform.position = new Vector3(0, 0, 0);
+        Start();
     }
 
     void Death()
     {
+        for (int i = 0; i < flocks.Count; i++)
+        {
+            Destroy(flocks[0]);
+            flocks.RemoveAt(0);
+        }
+        audioSource.clip = deathSoundEffect;
+        audioSource.Play();
         Debug.Log("オイオイ死んだわアイツ");
-        Destroy(this.gameObject);
+        gameManeger.SetState(State.end);
+        gameObject.SetActive(false);
         //死亡したときの処理
     }
 }

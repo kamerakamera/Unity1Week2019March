@@ -6,7 +6,7 @@ public class MainCamera : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] GameObject player;
-    private float posOffset = 4.3f;
+    public float posOffset = 4.3f;
     void Start()
     {
 
@@ -23,5 +23,11 @@ public class MainCamera : MonoBehaviour
         {
             transform.position = new Vector3(player.transform.position.x + posOffset, 0, -10);
         }
+    }
+
+    public void SetStartPos()
+    {
+        transform.position = new Vector3(0, 0, -10);
+        player = GameObject.Find("Player");
     }
 }

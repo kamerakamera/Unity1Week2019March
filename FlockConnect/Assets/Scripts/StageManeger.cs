@@ -11,10 +11,15 @@ public class StageManeger : MonoBehaviour
     private GameObject player;
     Vector3 enemyCreatePos;
     bool stopCor;
+    [SerializeField]
+    private GameManeger gameManeger;
+    [SerializeField]
+    private ScoreManeger scoreManeger;
     private List<GameObject> wallList = new List<GameObject>(), ikaList = new List<GameObject>(), maguroList = new List<GameObject>(), burrowList = new List<GameObject>();
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
+        SetEnemyCreateTime();
         StartCoroutine(CreateMaguroCor());
         StartCoroutine(CreateIkaCor());
         stopCor = false;
@@ -23,7 +28,7 @@ public class StageManeger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player == null)
+        if (gameManeger.GetState() != State.playing)
         {
             if (stopCor == false)
             {
@@ -33,9 +38,31 @@ public class StageManeger : MonoBehaviour
             }
             return;
         }
+        SetEnemyCreateTime();
         if (player.transform.position.x + wallInterval >= createPos)//ここでStage生成
         {
             CreateWall();
+        }
+    }
+
+    public void ResetStageList()
+    {
+        for (int i = 0; i < wallList.Count; i++)
+        {
+            Destroy(wallList[i]);
+        }
+        createPos = 0;
+        for (int i = 0; i < ikaList.Count; i++)
+        {
+            Destroy(ikaList[i]);
+        }
+        for (int i = 0; i < maguroList.Count; i++)
+        {
+            Destroy(maguroList[i]);
+        }
+        for (int i = 0; i < burrowList.Count; i++)
+        {
+            Destroy(burrowList[i]);
         }
     }
 
@@ -47,7 +74,7 @@ public class StageManeger : MonoBehaviour
             Destroy(wallList[0]);
             wallList.RemoveAt(0);
         }
-        if (Random.Range(0.0f, 10.0f) <= 3)
+        if (Random.Range(0.0f, (10.0f + scoreManeger.SwimDistance) / wallInterval) <= 5)
         {
             CreateBurrow();
         }
@@ -70,13 +97,13 @@ public class StageManeger : MonoBehaviour
 
     void CreateMaguro()
     {
-        if (player == null)
+        if (gameManeger.GetState() != State.playing)
         {
             return;
         }
         enemyCreatePos = new Vector3(maguroCreateOffset + player.transform.position.x, Random.Range(-createOffsetY, createOffsetY), 0);
         maguroList.Add(Instantiate(maguroPrefab, enemyCreatePos, Quaternion.identity));
-        if (maguroList.Count >= 12)
+        if (maguroList.Count >= 9)
         {
             Destroy(maguroList[0]);
             maguroList.RemoveAt(0);
@@ -85,17 +112,32 @@ public class StageManeger : MonoBehaviour
 
     void CreateIka()
     {
-        if (player == null)
+        if (gameManeger.GetState() != State.playing)
         {
             return;
         }
         enemyCreatePos = new Vector3(ikaCreateOffsetX + player.transform.position.x, Random.Range(-createOffsetY, createOffsetY), 0);
         ikaList.Add(Instantiate(ikaPrefab, enemyCreatePos, Quaternion.identity));
         ikaList[ikaList.Count - 1].transform.rotation = Quaternion.Euler(new Vector3(0, 0, Vector3.Angle(ikaList[ikaList.Count - 1].transform.up, player.transform.position - ikaList[ikaList.Count - 1].transform.position)));
-        if (ikaList.Count >= 12)
+        if (ikaList.Count >= 9)
         {
             Destroy(ikaList[0]);
             ikaList.RemoveAt(0);
+        }
+    }
+
+    void SetEnemyCreateTime()
+    {
+
+        if (scoreManeger.FlockScore <= 20)
+        {
+            maguroCreateInterval = 1.5f;
+            ikaCreateInterval = 1.5f;
+            if (scoreManeger.FlockScore <= 10)
+            {
+                maguroCreateInterval = 2.0f;
+                ikaCreateInterval = 2.5f;
+            }
         }
     }
     private IEnumerator CreateMaguroCor()
